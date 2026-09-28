@@ -60,18 +60,24 @@ export async function generateStaticParams() {
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params
-  const collection = await getCollectionByHandle(params.handle)
+  try {
+    const collection = await getCollectionByHandle(params.handle)
 
-  if (!collection) {
-    notFound()
+    if (!collection) {
+      return {
+        title: "Kolekcija | Šminka & Ljepota",
+      }
+    }
+
+    return {
+      title: `${collection.title} | Šminka & Ljepota`,
+      description: `${collection.title} kolekcija`,
+    }
+  } catch {
+    return {
+      title: "Kolekcija | Šminka & Ljepota",
+    }
   }
-
-  const metadata = {
-    title: `${collection.title} | Medusa Store`,
-    description: `${collection.title} collection`,
-  } as Metadata
-
-  return metadata
 }
 
 export default async function CollectionPage(props: Props) {
