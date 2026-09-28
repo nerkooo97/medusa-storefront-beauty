@@ -1,0 +1,29 @@
+services:
+  storefront_beauty:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_MEDUSA_BACKEND_URL: ${NEXT_PUBLIC_MEDUSA_BACKEND_URL:-http://localhost:9000}
+        NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY:-pk_test}
+        NEXT_PUBLIC_STORE_CATEGORY_CHANNEL: sminka
+        NEXT_PUBLIC_DEFAULT_REGION: dk
+    container_name: medusa_storefront_beauty
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    environment:
+      - PORT=8001
+      - HOSTNAME=0.0.0.0
+      - NEXT_PUBLIC_MEDUSA_BACKEND_URL=${NEXT_PUBLIC_MEDUSA_BACKEND_URL:-http://localhost:9000}
+      - NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=${NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY:-pk_test}
+      - NEXT_PUBLIC_STORE_CATEGORY_CHANNEL=sminka
+      - NEXT_PUBLIC_DEFAULT_REGION=dk
+    env_file:
+      - path: .env
+        required: false
+    networks:
+      - dokploy-network
+
+networks:
+  dokploy-network:
+    external: true
