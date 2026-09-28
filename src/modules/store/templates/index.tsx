@@ -1,42 +1,35 @@
-"use client"
+import { Suspense } from "react"
+import SkeletonProductGrid from "@modules/skeletons/templates/skeleton-product-grid"
+import PaginatedProducts from "@modules/store/templates/paginated-products"
+import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 
-import type { SearchClient } from "instantsearch.js"
-import { Configure, InstantSearch } from "react-instantsearch"
+export default function StoreTemplate({
+  sortBy,
+  page,
+  countryCode,
+}: {
+  sortBy?: SortOptions
+  page?: string
+  countryCode: string
+}) {
+  const pageNumber = page ? parseInt(page) : 1
+  const sort = sortBy || "created_at"
 
-import { PRODUCT_INDEX_NAME, searchClient } from "@lib/search-client"
-import StoreHits from "@modules/store/components/store-hits"
-import StoreRefinements from "@modules/store/components/store-refinements"
-import StoreSearchBox from "@modules/store/components/store-search-box"
-
-const PRODUCT_LIMIT = 12
-
-const StoreTemplate = ({ currencyCode }: { currencyCode: string }) => {
   return (
-    <div className="py-6 content-container" data-testid="category-container">
+    <div className="py-6 content-container" data-testid="store-container">
       <div className="mb-8 text-2xl-semi">
-        <h1 data-testid="store-page-title">All products</h1>
+        <h1 data-testid="store-page-title">Svi proizvodi</h1>
       </div>
 
-      <div className="flex flex-col small:flex-row small:items-start">
-        <InstantSearch
-          indexName={PRODUCT_INDEX_NAME}
-          searchClient={searchClient as unknown as SearchClient}
-          routing
-          future={{ preserveSharedStateOnUnmount: true }}
-        >
-          <Configure hitsPerPage={PRODUCT_LIMIT} />
-          <StoreRefinements currencyCode={currencyCode} />
-          <div className="w-full min-w-0">
-            <StoreSearchBox />
-            <StoreHits
-              hitsPerPage={PRODUCT_LIMIT}
-              currencyCode={currencyCode}
-            />
-          </div>
-        </InstantSearch>
+      <div className="w-full">
+        <Suspense fallback={<SkeletonProductGrid numberOfProducts={12} />}>
+          <PaginatedProducts
+            sortBy={sort}
+            page={pageNumber}
+            countryCode={countryCode}
+          />
+        </Suspense>
       </div>
     </div>
   )
 }
-
-export default StoreTemplate
